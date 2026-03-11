@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Three-Year Ferry Persona Protocol",
+  "version": "0.1",
+  "description": "人格投影核心协议：包含意愿存证、TTL生命周期与强制性自毁逻辑。",
+  "type": "object",
+  "required": ["protocol_meta", "consent_registry", "lifecycle_control", "data_vault", "termination_protocol"],
+  "properties": {
+    "protocol_meta": {
+      "type": "object",
+      "required": ["persona_uuid", "persona_name", "created_at"],
+      "properties": {
+        "persona_uuid": { "type": "string", "format": "uuid" },
+        "persona_name": { "type": "string", "description": "人格名称" },
+        "created_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "consent_registry": {
+      "type": "object",
+      "description": "意愿存证：确保所有数据录入均出自本人自愿。",
+      "required": ["recorded_by_self", "consent_timestamp"],
+      "properties": {
+        "recorded_by_self": { "type": "boolean", "const": true },
+        "consent_timestamp": { "type": "string", "format": "date-time" },
+        "consent_statement_video": { "type": "string", "description": "本人授权该系统运行的视频录像路径。" }
+      }
+    },
+    "lifecycle_control": {
+      "type": "object",
+      "required": ["ttl_days", "auto_destruction_enabled"],
+      "properties": {
+        "ttl_days": { "type": "integer", "const": 1095 },
+        "auto_destruction_enabled": { "type": "boolean", "const": true },
+        "countdown_mechanism": { "type": "string", "const": "local_system_clock" }
+      }
+    },
+    "conversation_constraints": {
+      "type": "object",
+      "description": "人格边界：平衡真实性与交互感。",
+      "required": ["inference_level", "fallback_strategy"],
+      "properties": {
+        "inference_level": {
+          "type": "string",
+          "enum": ["zero", "constrained"],
+          "default": "constrained",
+          "description": "constrained 模式允许 AI 进行语义关联，但不允许捏造事实。"
+        },
+        "fallback_strategy": {
+          "type": "string",
+          "enum": ["silence", "empathetic_redirect"],
+          "default": "empathetic_redirect",
+          "description": "当没有直接答案时，AI 应以共情的方式引导回已知的记忆领域。"
+        }
+      }
+    },
+    "data_vault": {
+      "type": "object",
+      "description": "存储库：包含人格采样数据及生物特征样本。",
+      "required": ["storage_policy", "biometric_samples", "interview_records"],
+      "properties": {
+        "storage_policy": { "type": "string", "const": "local_only" },
+        "biometric_samples": {
+          "type": "object",
+          "description": "原始生物特征样本，用于模型微调或克隆。",
+          "required": ["voice_samples_path", "video_samples_path"],
+          "properties": {
+            "voice_samples_path": { "type": "string", "description": "原始语音样本目录" },
+            "video_samples_path": { "type": "string", "description": "原始视频样本目录" },
+            "model_weights_path": { "type": "string", "description": "已生成的私有权重存放路径" }
+          }
+        },
+        "interview_records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["question_id", "answer_audio_path"],
+            "properties": {
+              "question_id": { "type": "string" },
+              "question_text": { "type": "string" },
+              "answer_audio_path": { "type": "string" },
+              "answer_transcript": { "type": "string" },
+              "tags": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "termination_protocol": {
+      "type": "object",
+      "description": "终章协议：静默销毁逻辑。",
+      "required": ["destruction_method", "silent_mode"],
+      "properties": {
+        "destruction_method": { "type": "string", "const": "physical_wipe_and_service_stop" },
+        "silent_mode": { "type": "boolean", "const": true, "description": "强制开启静默模式，严禁任何 UI 提示或告别仪式。" }
+      }
+    }
+  }
+}
